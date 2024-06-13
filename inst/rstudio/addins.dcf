@@ -1,0 +1,4 @@
+Name: Convert R Script to RMarkdown
+Description: Converts R script to RMarkdown format, splitting by ### comments.
+Binding: convert_script_to_rmd
+Interactive: false
