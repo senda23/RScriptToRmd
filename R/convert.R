@@ -11,33 +11,33 @@ convert_script_to_rmd <- function() {
   
   # Rmdのヘッダー
   rmd_header <- "---
-    title: \"タイトルを入力\"
-    output: 
-        pdf_document:
-            latex_engine: lualatex
-    header-includes:
-      - \\usepackage{siunitx}
-      - \\usepackage{float}
-    documentclass: ltjsarticle
-    ---
-    
-    ```{r RmdSetup, include=FALSE}
-    library(knitr)
-    library(imager)
-    
-    # 出力フォーマットが TeX（PDF含む）の場合のみ対処する
-    if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\")) {
-    
-      # conversion failure on '...' in 'mbcsToSbcs' の Warning 発生の workaround
-      options(device = function(file, width = 7, height = 7, ...) {
-        cairo_pdf(tempfile(), width = width, height = height, ...)
-      })
-      
-      ## 1. cairo_pdf を使う方法
-      # * family には OS にインストールされているフォント名を指定する。
-      knitr::opts_chunk$set(dev=\"cairo_pdf\", dev.args=list(family=\"Yu Gothic UI\"))
-    }
-    ```"
+title: \"タイトルを入力\"
+output: 
+    pdf_document:
+        latex_engine: lualatex
+header-includes:
+  - \\usepackage{siunitx}
+  - \\usepackage{float}
+documentclass: ltjsarticle
+---
+
+```{r RmdSetup, include=FALSE}
+library(knitr)
+library(imager)
+
+# 出力フォーマットが TeX（PDF含む）の場合のみ対処する
+if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\")) {
+
+  # conversion failure on '...' in 'mbcsToSbcs' の Warning 発生の workaround
+  options(device = function(file, width = 7, height = 7, ...) {
+    cairo_pdf(tempfile(), width = width, height = height, ...)
+  })
+  
+  ## 1. cairo_pdf を使う方法
+  # * family には OS にインストールされているフォント名を指定する。
+  knitr::opts_chunk$set(dev=\"cairo_pdf\", dev.args=list(family=\"Yu Gothic UI\"))
+}
+```"
   
   # Rmdフォーマットに変換
   rmd_content <- rmd_header
