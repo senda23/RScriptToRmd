@@ -11,41 +11,13 @@ convert_script_to_rmd <- function() {
   chunks <- split(lines, cumsum(grepl("^###", lines)))
 
   # 新しいRmdファイルのパスを決定
-  if (nzchar(script_path)) {
-    new_file <- sub("\\.R$", ".Rmd", script_path)
-  } else {
-    new_file <- file.path(getwd(), "new_file.Rmd")
-  }
+  new_file <- sub("\\.R$", ".Rmd", script_path)
 
   if (file.exists(new_file)) {
-    # 既存のRmdファイルを読み込む
-    existing_rmd_content <- readLines(new_file)
-
-    for (chunk in chunks) {
-      if (grepl("^###", chunk[[1]])) {
-        chunk_header <- gsub("^###\\s*", "", chunk[[1]])
-        chunk_content <- paste(chunk[-1], collapse = "\n")
-        chunk_text <- paste0("```{r ", chunk_header, "}\n", chunk_content, "\n```")
-
-        # 既存のRmdファイルに同一のrチャンクが存在するか確認
-        escaped_chunk_header <- gsub("([{}])", "\\\\\\1", chunk_header)
-        pattern <- paste0("```\\{r\\s+", gsub("\\s", "\\\\s", escaped_chunk_header), "\\s*\\}")
-        existing_chunk_start <- grep(pattern, existing_rmd_content, perl = TRUE)
-
-        if (length(existing_chunk_start) > 0) {
-          # 同一のrチャンクが存在する場合、そのチャンクを置き換える
-          existing_chunk_end <- grep("^```$", existing_rmd_content[existing_chunk_start:length(existing_rmd_content)]) + existing_chunk_start - 1
-          existing_rmd_content <- c(existing_rmd_content[1:(existing_chunk_start - 1)], chunk_text, existing_rmd_content[(existing_chunk_end + 1):length(existing_rmd_content)])
-        } else {
-          # 同一のrチャンクが存在しない場合はエラーを出力して停止
-          stop("同一のrチャンクが存在しません。Rmdファイルを上書きできません。")
-        }
-      }
-    }
-
-    # 既存のRmdファイルを更新
-    writeLines(existing_rmd_content, new_file)
-  } else {
+    # 同名のRmdファイルが存在する場合，上書きせずに終了
+    stop("同名のRmdファイルが存在するため，出力できません．")
+  } 
+  else {
     # 新しいRmdファイルの内容を生成
     rmd_header <- "---
 title: \"タイトルを入力\"
@@ -81,7 +53,7 @@ if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\"))
         chunk_header <- gsub("^###\\s*", "", chunk[[1]])
         chunk_content <- paste(chunk[-1], collapse = "\n")
         chunk_text <- paste0("```", chunk_header, "\n", chunk_content, "\n```")
-        rmd_content <- paste(rmd_content, chunk_text, sep = "\n\n\n")
+        rmd_content <- paste(rmd_content, chunk_text, sep = "\n\n\n\n")
       }
     }
 
