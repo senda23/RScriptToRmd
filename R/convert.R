@@ -42,12 +42,14 @@ if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\"))
   # Rmdフォーマットに変換
   rmd_content <- rmd_header
   for (chunk in chunks) {
-    chunk_content <- paste(chunk, collapse = "\n")
-    # ###の行をキャプチャして{r}に変換
-    chunk_content <- gsub("^###\\s*(.*)$", "```{r \\1}", chunk_content, perl = TRUE)
-    chunk_content <- gsub("^###\\s*$", "```{r}", chunk_content, perl = TRUE) # 空のチャンク名を処理
-    chunk_content <- paste0(chunk_content, "\n```")
-    rmd_content <- paste(rmd_content, chunk_content, sep = "\n\n\n")
+    if (grepl("^###", chunk[[1]])) {
+      chunk_header <- gsub("^###\\s*", "", chunk[[1]])
+      chunk_content <- paste(chunk[-1], collapse = "\n")
+      chunk_text <- paste0("```{r ", chunk_header, "}\n", chunk_content, "\n```")
+    } else {
+      chunk_text <- paste(chunk, collapse = "\n")
+    }
+    rmd_content <- paste(rmd_content, chunk_text, sep = "\n\n\n")
   }
   
   # 新しいRmdファイルを作成
