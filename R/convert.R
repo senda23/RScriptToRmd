@@ -11,39 +11,40 @@ convert_script_to_rmd <- function() {
   
   # Rmdのヘッダー
   rmd_header <- "---
-  title: \"タイトルを入力\"
-  output: 
-      pdf_document:
-          latex_engine: lualatex
-  header-includes:
-    - \\usepackage{siunitx}
-    - \\usepackage{float}
-  documentclass: ltjsarticle
-  ---
-  
-  ```{r RmdSetup, include=FALSE}
-  library(knitr)
-  library(imager)
-  
-  # 出力フォーマットが TeX（PDF含む）の場合のみ対処する
-  if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\")) {
-  
-    # conversion failure on '...' in 'mbcsToSbcs' の Warning 発生の workaround
-    options(device = function(file, width = 7, height = 7, ...) {
-      cairo_pdf(tempfile(), width = width, height = height, ...)
-    })
+    title: \"タイトルを入力\"
+    output: 
+        pdf_document:
+            latex_engine: lualatex
+    header-includes:
+      - \\usepackage{siunitx}
+      - \\usepackage{float}
+    documentclass: ltjsarticle
+    ---
     
-    ## 1. cairo_pdf を使う方法
-    # * family には OS にインストールされているフォント名を指定する。
-    knitr::opts_chunk$set(dev=\"cairo_pdf\", dev.args=list(family=\"Yu Gothic UI\"))
-  }
-  ```"
-
+    ```{r RmdSetup, include=FALSE}
+    library(knitr)
+    library(imager)
+    
+    # 出力フォーマットが TeX（PDF含む）の場合のみ対処する
+    if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\")) {
+    
+      # conversion failure on '...' in 'mbcsToSbcs' の Warning 発生の workaround
+      options(device = function(file, width = 7, height = 7, ...) {
+        cairo_pdf(tempfile(), width = width, height = height, ...)
+      })
+      
+      ## 1. cairo_pdf を使う方法
+      # * family には OS にインストールされているフォント名を指定する。
+      knitr::opts_chunk$set(dev=\"cairo_pdf\", dev.args=list(family=\"Yu Gothic UI\"))
+    }
+    ```"
+  
   # Rmdフォーマットに変換
   rmd_content <- rmd_header
   for (chunk in chunks) {
     chunk_content <- paste(chunk, collapse = "\n")
-    chunk_content <- sub("^###", "{r", chunk_content) chunk_content <- paste0(chunk_content, "\n")
+    chunk_content <- sub("^###", "```{", chunk_content)
+    chunk_content <- paste0(chunk_content, "\n```")
     rmd_content <- paste(rmd_content, chunk_content, sep = "\n\n\n")
   }
   
@@ -54,8 +55,7 @@ convert_script_to_rmd <- function() {
   # 新しいファイルをRStudioで開く
   if (file.exists(new_file)) {
     rstudioapi::navigateToFile(new_file)
-  }
-  else {
+  } else {
     stop("ファイルが存在しません: ", new_file)
   }
 }
