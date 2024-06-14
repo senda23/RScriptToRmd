@@ -28,8 +28,9 @@ convert_script_to_rmd <- function() {
         chunk_text <- paste0("```{r ", chunk_header, "}\n", chunk_content, "\n```")
 
         # 既存のRmdファイルに同一のrチャンクが存在するか確認
-        pattern <- paste0("```\\{r\\s+", gsub("\\s", "\\\\s", chunk_header), "\\s*\\}")
-        existing_chunk_start <- grep(pattern, existing_rmd_content)
+        escaped_chunk_header <- gsub("([{}])", "\\\\\\1", chunk_header)
+        pattern <- paste0("```\\{r\\s+", gsub("\\s", "\\\\s", escaped_chunk_header), "\\s*\\}")
+        existing_chunk_start <- grep(pattern, existing_rmd_content, perl = TRUE)
 
         if (length(existing_chunk_start) > 0) {
           # 同一のrチャンクが存在する場合、そのチャンクを置き換える
