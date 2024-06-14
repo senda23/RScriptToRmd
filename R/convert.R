@@ -23,7 +23,11 @@ convert_script_to_rmd <- function() {
   writeLines(rmd_content, new_file)
   
   # 新しいファイルをRStudioで開く
-  rstudioapi::navigateToFile(new_file)
+  if (file.exists(new_file)) {
+    rstudioapi::navigateToFile(new_file)
+  } else {
+    stop("ファイルが存在しません: ", new_file)
+  }
 }
 
 # アドインとして関数を登録
