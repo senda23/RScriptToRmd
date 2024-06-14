@@ -43,8 +43,8 @@ if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\"))
   rmd_content <- rmd_header
   for (chunk in chunks) {
     chunk_content <- paste(chunk, collapse = "\n")
-    chunk_content <- sub("^###\\s*(.*)$", "```{\\1}", chunk_content)
-    chunk_content <- paste0(chunk_content, "\n```")
+    # ###の行をキャプチャして{r}に変換
+    chunk_content <- gsub("^###(.*)$", "```{\\1}\n```", chunk_content, perl = TRUE)
     rmd_content <- paste(rmd_content, chunk_content, sep = "\n\n\n")
   }
   
