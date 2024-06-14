@@ -43,8 +43,9 @@ if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\"))
   rmd_content <- rmd_header
   for (chunk in chunks) {
     chunk_content <- paste(chunk, collapse = "\n")
-    # ###の行をキャプチャして{}に変換
-    chunk_content <- gsub("^###(.*)$", "```\n{\\1}", chunk_content, perl = TRUE)
+    # ###の行をキャプチャして{r}に変換
+    chunk_content <- gsub("^###\\s*(.*)$", "```{r \\1}", chunk_content, perl = TRUE)
+    chunk_content <- gsub("^###\\s*$", "```{r}", chunk_content, perl = TRUE) # 空のチャンク名を処理
     chunk_content <- paste0(chunk_content, "\n```")
     rmd_content <- paste(rmd_content, chunk_content, sep = "\n\n\n")
   }
