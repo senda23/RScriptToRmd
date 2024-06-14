@@ -80,7 +80,7 @@ if (knitr::opts_knit$get(\"rmarkdown.pandoc.to\") %in% c(\"beamer\", \"latex\"))
       if (grepl("^###", chunk[[1]])) {
         chunk_header <- gsub("^###\\s*", "", chunk[[1]])
         chunk_content <- paste(chunk[-1], collapse = "\n")
-        chunk_text <- paste0("```{r ", chunk_header, "}\n", chunk_content, "\n```")
+        chunk_text <- paste0("```", chunk_header, "\n", chunk_content, "\n```")
         rmd_content <- paste(rmd_content, chunk_text, sep = "\n\n\n")
       }
     }
